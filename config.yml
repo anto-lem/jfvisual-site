@@ -1,0 +1,78 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+locale: "fr"
+
+collections:
+  - name: "site"
+    label: "Contenu du site"
+    files:
+      - file: "content/content.json"
+        label: "Page d'accueil"
+        name: "home"
+        format: "json"
+        fields:
+          - label: "Section Hero (en haut de page)"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Tagline (au-dessus du titre)", name: "tag", widget: "string" }
+              - { label: "Titre — Ligne 1", name: "title_line1", widget: "string" }
+              - { label: "Titre — Ligne 2 (préfixe)", name: "title_line2_prefix", widget: "string", hint: "Le mot avant la partie en rouge. Ex: 'L''" }
+              - { label: "Titre — Ligne 2 (mot rouge)", name: "title_line2_accent", widget: "string", hint: "Le mot qui sera mis en rouge" }
+              - { label: "Sous-titre", name: "subtitle", widget: "text" }
+
+          - label: "Statistiques (3 chiffres clés)"
+            name: "stats"
+            widget: "list"
+            max: 3
+            min: 3
+            fields:
+              - { label: "Nombre", name: "number", widget: "string" }
+              - { label: "Suffixe (ex: +, %, M+)", name: "suffix", widget: "string" }
+              - { label: "Étiquette", name: "label", widget: "string" }
+
+          - label: "Section À propos"
+            name: "about"
+            widget: "object"
+            fields:
+              - { label: "Titre — Ligne 1", name: "title_line1", widget: "string" }
+              - { label: "Titre — Mot en rouge", name: "title_accent", widget: "string" }
+              - { label: "Paragraphe 1", name: "paragraph1", widget: "text" }
+              - { label: "Paragraphe 2", name: "paragraph2", widget: "text" }
+
+          - label: "Services"
+            name: "services"
+            widget: "list"
+            fields:
+              - { label: "Nom du service", name: "name", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+              - label: "Tags (mots-clés)"
+                name: "tags"
+                widget: "list"
+                field: { label: "Tag", name: "tag", widget: "string" }
+
+          - label: "Portfolio (projets)"
+            name: "projects"
+            widget: "list"
+            fields:
+              - { label: "Titre du projet", name: "title", widget: "string" }
+              - { label: "Type de projet", name: "tag", widget: "string", hint: "Ex: 'Site web + Contenu'" }
+              - { label: "Couleur de fond", name: "color", widget: "string", default: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)", hint: "Gradient CSS — laisse tel quel si tu ne sais pas" }
+
+          - label: "Section Contact"
+            name: "contact"
+            widget: "object"
+            fields:
+              - { label: "Titre — Ligne 1", name: "title_line1", widget: "string" }
+              - { label: "Titre — Ligne 2", name: "title_line2", widget: "string" }
+              - { label: "Titre — Ligne 3 (préfixe)", name: "title_line3_prefix", widget: "string" }
+              - { label: "Titre — Ligne 3 (mot rouge)", name: "title_line3_accent", widget: "string" }
+              - { label: "Titre — Ligne 3 (suffixe)", name: "title_line3_suffix", widget: "string" }
+              - { label: "Sous-titre", name: "subtitle", widget: "text" }
+              - { label: "Email de contact", name: "email", widget: "string" }
+              - { label: "Téléphone", name: "phone", widget: "string" }

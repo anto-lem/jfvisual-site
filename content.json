@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "tag": "Agence créative — Montréal",
+    "title_line1": "CRÉER",
+    "title_line2_prefix": "L'",
+    "title_line2_accent": "IMPACT",
+    "subtitle": "Contenu visuel et sites web qui transforment votre présence digitale en une expérience mémorable."
+  },
+  "stats": [
+    { "number": "50", "suffix": "+", "label": "Projets livrés" },
+    { "number": "98", "suffix": "%", "label": "Clients satisfaits" },
+    { "number": "3", "suffix": "M+", "label": "Impressions générées" }
+  ],
+  "about": {
+    "title_line1": "AU-DELÀ DU",
+    "title_accent": "VISIBLE",
+    "paragraph1": "Chez JF Visual, chaque pixel a un objectif. Nous fusionnons stratégie, esthétique et technologie pour créer des expériences digitales qui ne se contentent pas d'exister — elles marquent les esprits.",
+    "paragraph2": "Nous croyons que le contenu de qualité et un site web exceptionnel sont les deux piliers d'une présence digitale qui convertit."
+  },
+  "services": [
+    {
+      "name": "CRÉATION DE CONTENU",
+      "description": "Du concept à la publication — contenu visuel, vidéo et rédactionnel qui capte l'attention et engage votre audience sur toutes les plateformes.",
+      "tags": ["Vidéo", "Photo", "Réseaux sociaux", "Copywriting"]
+    },
+    {
+      "name": "CRÉATION DE SITES WEB",
+      "description": "Sites sur mesure, rapides et immersifs. Design unique, animations fluides et architecture pensée pour la conversion et l'expérience utilisateur.",
+      "tags": ["Design UI/UX", "Développement", "Animation", "SEO"]
+    },
+    {
+      "name": "STRATÉGIE DIGITALE",
+      "description": "Analyse, positionnement et planification pour maximiser votre impact digital. On construit le plan, vous récoltez les résultats.",
+      "tags": ["Audit", "Branding", "Positionnement", "Analytics"]
+    },
+    {
+      "name": "IDENTITÉ VISUELLE",
+      "description": "Logos, chartes graphiques et univers visuels qui reflètent votre ADN de marque et vous différencient dans un marché saturé.",
+      "tags": ["Logo", "Charte graphique", "Direction artistique"]
+    }
+  ],
+  "projects": [
+    { "title": "LUXE MONTRÉAL", "tag": "Site web + Contenu", "color": "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)" },
+    { "title": "FORGE FITNESS", "tag": "Branding + Site web", "color": "linear-gradient(135deg,#2d132c,#801336,#c72c41)" },
+    { "title": "ARTISAN & CO", "tag": "Contenu Social", "color": "linear-gradient(135deg,#0c0c0c,#1a1a2e,#232741)" },
+    { "title": "NÉON STUDIO", "tag": "Identité + Site web", "color": "linear-gradient(135deg,#1b1b2f,#162447,#1f4068)" }
+  ],
+  "contact": {
+    "title_line1": "PRÊT À",
+    "title_line2": "MARQUER",
+    "title_line3_prefix": "LES ",
+    "title_line3_accent": "ESPRITS",
+    "title_line3_suffix": " ?",
+    "subtitle": "Parlons de votre prochain projet. Chaque grande marque commence par une conversation.",
+    "email": "hello@jfvisual.com",
+    "phone": "+1 (514) 555-0100"
+  }
+}
