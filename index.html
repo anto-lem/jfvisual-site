@@ -1,12 +1,372 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>JF Visual — Administration</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JF Visual — Création de contenu & Sites web</title>
+<meta name="description" content="Agence créative à Montréal — Création de contenu visuel et sites web sur mesure.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#0a0a0a;--white:#f0f0f0;--gray:#888;--gray-dark:#1a1a1a;--gray-mid:#2a2a2a;
+  --red:#e63946;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-mono:'Space Mono',monospace;
+  --font-body:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--black);color:var(--white);font-family:var(--font-body);overflow-x:hidden}
+::selection{background:var(--red);color:var(--white)}
+#loader{position:fixed;inset:0;z-index:9999;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}
+#loader.hidden{opacity:0;visibility:hidden}
+#loader .bar{width:200px;height:2px;background:var(--gray-mid);margin-top:24px;overflow:hidden}
+#loader .bar-fill{height:100%;width:0;background:var(--red);transition:width .1s}
+#loader .pct{font-family:var(--font-mono);font-size:13px;color:var(--gray);margin-top:12px;letter-spacing:2px}
+.loader-logo{font-family:var(--font-display);font-size:clamp(32px,6vw,56px);letter-spacing:6px}
+.loader-logo span{color:var(--red)}
+.cursor-dot{position:fixed;width:8px;height:8px;background:var(--red);border-radius:50%;pointer-events:none;z-index:10000;mix-blend-mode:difference}
+.cursor-ring{position:fixed;width:40px;height:40px;border:1.5px solid rgba(230,57,70,.5);border-radius:50%;pointer-events:none;z-index:10000;transition:width .3s,height .3s;mix-blend-mode:difference}
+.cursor-ring.hover{width:60px;height:60px;border-color:var(--red)}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:24px 40px;display:flex;justify-content:space-between;align-items:center;mix-blend-mode:difference}
+.nav-logo{font-family:var(--font-display);font-size:28px;letter-spacing:4px;color:var(--white);text-decoration:none}
+.nav-logo span{color:var(--red)}
+.nav-links{display:flex;gap:32px}
+.nav-links a{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);text-decoration:none;position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--red);transition:width .3s}
+.nav-links a:hover{color:var(--white)}
+.nav-links a:hover::after{width:100%}
+#hero{height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+#webgl-canvas{position:absolute;inset:0;z-index:1}
+.hero-content{position:relative;z-index:2;text-align:center;padding:0 20px;pointer-events:none}
+.hero-tag{font-family:var(--font-mono);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--red);margin-bottom:24px;opacity:0;animation:fadeUp .8s .5s forwards}
+.hero-title{font-family:var(--font-display);font-size:clamp(48px,10vw,140px);line-height:.9;letter-spacing:4px;opacity:0;animation:fadeUp .8s .7s forwards;text-shadow:0 0 60px rgba(10,10,10,.9)}
+.hero-title span{color:var(--red)}
+.hero-sub{font-weight:300;font-size:clamp(14px,1.8vw,20px);color:var(--gray);margin-top:24px;max-width:500px;margin:24px auto 0;opacity:0;animation:fadeUp .8s .9s forwards}
+.scroll-indicator{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp .8s 1.2s forwards;z-index:2}
+.scroll-indicator span{font-family:var(--font-mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray)}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--red),transparent);animation:scrollPulse 2s infinite}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(.5)}50%{opacity:1;transform:scaleY(1)}}
+.section{padding:120px 40px;position:relative}
+.section-label{font-family:var(--font-mono);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--red);margin-bottom:16px}
+.section-number{font-family:var(--font-display);font-size:clamp(100px,15vw,200px);color:rgba(255,255,255,.03);position:absolute;top:60px;right:40px;line-height:1;pointer-events:none}
+.section-title{font-family:var(--font-display);font-size:clamp(36px,6vw,80px);line-height:1;letter-spacing:2px;margin-bottom:24px}
+.section-title em{font-style:normal;color:var(--red)}
+.section-text{font-weight:300;font-size:clamp(14px,1.4vw,18px);color:var(--gray);max-width:600px;line-height:1.8}
+.marquee-wrap{overflow:hidden;padding:60px 0;border-top:1px solid var(--gray-mid);border-bottom:1px solid var(--gray-mid)}
+.marquee{display:flex;gap:60px;animation:marqueeScroll 20s linear infinite;width:max-content}
+.marquee span{font-family:var(--font-display);font-size:clamp(40px,6vw,72px);white-space:nowrap;opacity:.15}
+.marquee span.red{color:var(--red);opacity:.6}
+@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+#about{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;min-height:80vh}
+.about-visual{position:relative;height:500px}
+#about-canvas{width:100%;height:100%}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:60px;padding-top:60px;border-top:1px solid var(--gray-mid)}
+.stat{text-align:center}
+.stat-number{font-family:var(--font-display);font-size:clamp(48px,6vw,72px);line-height:1}
+.stat-number span{color:var(--red)}
+.stat-label{font-family:var(--font-mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-top:8px}
+#services{background:var(--gray-dark)}
+.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:60px}
+.service-card{background:var(--black);padding:60px 40px;position:relative;overflow:hidden;cursor:pointer;transition:all .5s}
+.service-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s}
+.service-card:hover::before{transform:scaleX(1)}
+.service-card:hover{background:#111}
+.service-name{font-family:var(--font-display);font-size:clamp(24px,3vw,36px);letter-spacing:2px;margin-bottom:12px;margin-top:24px}
+.service-desc{font-weight:300;font-size:14px;color:var(--gray);line-height:1.7;max-width:360px}
+.service-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.service-tags span{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gray-mid);color:var(--gray);border-radius:20px;transition:all .3s}
+.service-card:hover .service-tags span{border-color:var(--red);color:var(--white)}
+.service-num{font-family:var(--font-mono);font-size:11px;color:var(--red);letter-spacing:2px}
+#portfolio .section-title{text-align:center}
+.portfolio-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;margin-top:60px}
+.portfolio-item{position:relative;overflow:hidden;aspect-ratio:16/10;cursor:pointer}
+.portfolio-item .inner{width:100%;height:100%;transition:transform .8s;display:flex;align-items:center;justify-content:center}
+.portfolio-item:hover .inner{transform:scale(1.08)}
+.portfolio-item .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.95),transparent 60%);opacity:0;transition:opacity .5s;display:flex;flex-direction:column;justify-content:flex-end;padding:40px;z-index:2}
+.portfolio-item:hover .overlay{opacity:1}
+.portfolio-item .p-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.portfolio-item .p-title{font-family:var(--font-display);font-size:clamp(20px,3vw,32px);letter-spacing:2px}
+.portfolio-item .p-number{position:absolute;top:20px;right:20px;font-family:var(--font-mono);font-size:10px;color:var(--gray);letter-spacing:2px;z-index:2}
+.portfolio-item .p-label{font-family:var(--font-display);font-size:clamp(32px,5vw,64px);letter-spacing:4px;opacity:.3}
+#contact{text-align:center;padding:160px 40px;position:relative;overflow:hidden}
+#contact::before{content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(230,57,70,.08),transparent 60%);pointer-events:none}
+.cta-title{font-family:var(--font-display);font-size:clamp(48px,8vw,120px);line-height:.95;letter-spacing:3px;margin-bottom:24px;position:relative;z-index:2}
+.cta-title em{font-style:normal;color:var(--red)}
+.cta-sub{font-weight:300;font-size:clamp(14px,1.4vw,18px);color:var(--gray);margin:0 auto 48px;max-width:500px;position:relative;z-index:2}
+.cta-btn{display:inline-flex;align-items:center;gap:12px;font-family:var(--font-mono);font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--white);border:1px solid var(--red);padding:18px 48px;position:relative;overflow:hidden;text-decoration:none;z-index:2;background:transparent}
+.cta-btn::before{content:'';position:absolute;inset:0;background:var(--red);transform:translateX(-101%);transition:transform .4s}
+.cta-btn:hover::before{transform:translateX(0)}
+.cta-btn span,.cta-btn svg{position:relative;z-index:1}
+.cta-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+footer{padding:40px;border-top:1px solid var(--gray-mid);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+.footer-left{font-family:var(--font-mono);font-size:10px;color:var(--gray);letter-spacing:2px}
+.reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:.5}
+@media(max-width:900px){
+  nav{padding:16px 20px}.nav-links{display:none}.section{padding:80px 20px}
+  #about{grid-template-columns:1fr;gap:40px}.about-visual{height:300px}
+  .services-grid,.portfolio-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr;gap:24px}
+  footer{flex-direction:column;text-align:center}.section-number{display:none}
+}
+</style>
 </head>
 <body>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div id="loader">
+  <div class="loader-logo">JF <span>VISUAL</span></div>
+  <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  <div class="pct" id="pctText">0%</div>
+</div>
+<nav>
+  <a href="#hero" class="nav-logo">JF <span>VISUAL</span></a>
+  <div class="nav-links">
+    <a href="#about">À propos</a>
+    <a href="#services">Services</a>
+    <a href="#portfolio">Projets</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+<section id="hero">
+  <canvas id="webgl-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag" data-content="hero.tag"></div>
+    <h1 class="hero-title"><span data-content="hero.title_line1"></span><br><span data-content="hero.title_line2_prefix"></span><span class="accent" data-content="hero.title_line2_accent"></span></h1>
+    <p class="hero-sub" data-content="hero.subtitle"></p>
+  </div>
+  <div class="scroll-indicator"><div class="scroll-line"></div><span>Découvrir</span></div>
+</section>
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span>CONTENU</span><span class="red">&#10022;</span><span>SITES WEB</span><span class="red">&#10022;</span>
+    <span>BRANDING</span><span class="red">&#10022;</span><span>STRATÉGIE</span><span class="red">&#10022;</span>
+    <span>DESIGN</span><span class="red">&#10022;</span><span>CONTENU</span><span class="red">&#10022;</span>
+    <span>SITES WEB</span><span class="red">&#10022;</span><span>BRANDING</span><span class="red">&#10022;</span>
+  </div>
+</div>
+<section id="about" class="section">
+  <div class="about-visual"><canvas id="about-canvas"></canvas></div>
+  <div>
+    <div class="section-number">01</div>
+    <div class="section-label reveal">À propos</div>
+    <h2 class="section-title reveal"><span data-content="about.title_line1"></span><br><em data-content="about.title_accent"></em></h2>
+    <p class="section-text reveal" data-content="about.paragraph1"></p>
+    <p class="section-text reveal" style="margin-top:16px;color:var(--white);font-weight:400" data-content="about.paragraph2"></p>
+  </div>
+</section>
+<div class="section" style="padding-top:0">
+  <div class="stats-row" id="statsContainer"></div>
+</div>
+<section id="services" class="section">
+  <div class="section-number">02</div>
+  <div class="section-label reveal">Services</div>
+  <h2 class="section-title reveal">CE QU'ON<br><em>FAIT</em></h2>
+  <div class="services-grid" id="servicesContainer"></div>
+</section>
+<section id="portfolio" class="section">
+  <div class="section-number">03</div>
+  <div class="section-label reveal" style="text-align:center">Projets sélectionnés</div>
+  <h2 class="section-title reveal">NOS <em>RÉALISATIONS</em></h2>
+  <div class="portfolio-grid" id="portfolioContainer"></div>
+</section>
+<section id="contact">
+  <h2 class="cta-title reveal"><span data-content="contact.title_line1"></span><br><span data-content="contact.title_line2"></span><br><span data-content="contact.title_line3_prefix"></span><em data-content="contact.title_line3_accent"></em><span data-content="contact.title_line3_suffix"></span></h2>
+  <p class="cta-sub reveal" data-content="contact.subtitle"></p>
+  <a href="#" id="contactLink" class="cta-btn reveal"><span>Démarrer un projet</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+</section>
+<footer>
+  <div class="footer-left">© 2026 JF VISUAL — TOUS DROITS RÉSERVÉS</div>
+  <div class="footer-left" id="contactInfo"></div>
+</footer>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ============ LOAD CONTENT FROM JSON ============
+async function loadContent(){
+  try {
+    const res = await fetch('/content/content.json?t=' + Date.now());
+    const data = await res.json();
+    
+    // Fill all elements with data-content attributes
+    document.querySelectorAll('[data-content]').forEach(el => {
+      const path = el.dataset.content.split('.');
+      let val = data;
+      path.forEach(p => val = val?.[p]);
+      if (val !== undefined) el.textContent = val;
+    });
+    
+    // Stats
+    const statsHtml = data.stats.map(s => `
+      <div class="stat reveal">
+        <div class="stat-number" data-target="${s.number}">0<span>${s.suffix}</span></div>
+        <div class="stat-label">${s.label}</div>
+      </div>
+    `).join('');
+    document.getElementById('statsContainer').innerHTML = statsHtml;
+    
+    // Services
+    const servicesHtml = data.services.map((s, i) => `
+      <div class="service-card reveal">
+        <div class="service-num">0${i+1}</div>
+        <div class="service-name">${s.name}</div>
+        <div class="service-desc">${s.description}</div>
+        <div class="service-tags">${s.tags.map(t => `<span>${t}</span>`).join('')}</div>
+      </div>
+    `).join('');
+    document.getElementById('servicesContainer').innerHTML = servicesHtml;
+    
+    // Portfolio
+    const projectsHtml = data.projects.map((p, i) => `
+      <div class="portfolio-item reveal">
+        <div class="inner" style="background:${p.color}">
+          <span class="p-label">${p.title}</span>
+        </div>
+        <div class="overlay">
+          <div class="p-tag">${p.tag}</div>
+          <div class="p-title">${p.title}</div>
+        </div>
+        <div class="p-number">0${i+1}</div>
+      </div>
+    `).join('');
+    document.getElementById('portfolioContainer').innerHTML = projectsHtml;
+    
+    // Contact button
+    document.getElementById('contactLink').href = 'mailto:' + data.contact.email;
+    document.getElementById('contactInfo').textContent = data.contact.email + ' — ' + data.contact.phone;
+    
+    initObservers();
+  } catch (e) {
+    console.error('Content load error:', e);
+  }
+}
+
+// ============ HERO WEBGL ============
+function initHero(){
+  const canvas = document.getElementById('webgl-canvas');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, canvas.offsetWidth/canvas.offsetHeight, .1, 100);
+  camera.position.z = 4;
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  const geo = new THREE.IcosahedronGeometry(1.3, 64);
+  const uniforms = { uTime:{value:0}, uMouse:{value:new THREE.Vector2(0,0)}, uHover:{value:0} };
+  const vs = `uniform float uTime;uniform vec2 uMouse;uniform float uHover;varying float vDisp;varying vec3 vNormal;
+    vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
+    vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+    float snoise(vec3 v){const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);
+    vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;
+    vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;
+    i=mod289(i);vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));
+    float n_=0.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.0*floor(p*ns.z*ns.z);
+    vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;
+    vec4 h=1.0-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+    vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(0.0));
+    vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+    vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+    vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+    p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+    vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;
+    return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}
+    void main(){vNormal=normal;float t=uTime*0.35;float n=snoise(position*1.2+t);float n2=snoise(position*2.5-t*0.6);
+    float disp=n*0.35+n2*0.12;disp+=uHover*0.4*sin(uTime*2.0+position.x*3.0);vDisp=disp;
+    vec3 newPos=position+normal*disp;gl_Position=projectionMatrix*modelViewMatrix*vec4(newPos,1.0);}`;
+  const fs = `varying float vDisp;varying vec3 vNormal;void main(){
+    vec3 base=vec3(0.04,0.04,0.04);vec3 red=vec3(0.902,0.224,0.275);vec3 white=vec3(0.94,0.94,0.94);
+    float edge=smoothstep(0.0,0.45,vDisp);vec3 col=mix(base,red,edge);
+    float rim=pow(1.0-abs(vNormal.z),2.0);col=mix(col,white,rim*0.25);gl_FragColor=vec4(col,1.0);}`;
+  const mat = new THREE.ShaderMaterial({uniforms, vertexShader:vs, fragmentShader:fs});
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  const wireMat = new THREE.ShaderMaterial({uniforms, vertexShader:vs, fragmentShader:`void main(){gl_FragColor=vec4(0.902,0.224,0.275,0.08);}`, wireframe:true, transparent:true});
+  const wire = new THREE.Mesh(geo, wireMat);
+  wire.scale.setScalar(1.02);
+  scene.add(wire);
+  let mx=0,my=0,th=0;
+  window.addEventListener('mousemove', e=>{mx=(e.clientX/window.innerWidth)*2-1;my=-(e.clientY/window.innerHeight)*2+1;uniforms.uMouse.value.set(mx,my);if(e.clientY<window.innerHeight)th=1;});
+  const clock = new THREE.Clock();
+  function animate(){const t=clock.getElapsedTime();uniforms.uTime.value=t;uniforms.uHover.value+=(th-uniforms.uHover.value)*0.05;
+    mesh.rotation.y=t*0.15+mx*0.4;mesh.rotation.x=my*0.3;wire.rotation.copy(mesh.rotation);
+    renderer.render(scene,camera);requestAnimationFrame(animate);}
+  animate();
+  window.addEventListener('resize',()=>{camera.aspect=canvas.offsetWidth/canvas.offsetHeight;camera.updateProjectionMatrix();renderer.setSize(canvas.offsetWidth,canvas.offsetHeight);});
+}
+
+function initAbout(){
+  const canvas = document.getElementById('about-canvas');
+  if(!canvas) return;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, canvas.offsetWidth/canvas.offsetHeight, .1, 100);
+  camera.position.z = 5;
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  const geo = new THREE.TorusKnotGeometry(1.1,.32,200,32);
+  const mat = new THREE.MeshStandardMaterial({color:0xe63946, metalness:.6, roughness:.25});
+  const knot = new THREE.Mesh(geo, mat);
+  scene.add(knot);
+  const wire = new THREE.Mesh(new THREE.TorusKnotGeometry(1.13,.34,120,16), new THREE.MeshBasicMaterial({color:0xffffff, wireframe:true, transparent:true, opacity:.06}));
+  scene.add(wire);
+  scene.add(new THREE.AmbientLight(0x404040, 1.5));
+  const key = new THREE.DirectionalLight(0xffffff, 2); key.position.set(3,3,5); scene.add(key);
+  const rim = new THREE.PointLight(0xe63946, 3, 10); rim.position.set(-3,-2,2); scene.add(rim);
+  let mx=0,my=0;
+  canvas.addEventListener('mousemove', e=>{const r=canvas.getBoundingClientRect();mx=((e.clientX-r.left)/r.width)*2-1;my=-((e.clientY-r.top)/r.height)*2+1});
+  const clock = new THREE.Clock();
+  function loop(){const t=clock.getElapsedTime();knot.rotation.x=t*0.25+my*0.5;knot.rotation.y=t*0.35+mx*0.5;wire.rotation.copy(knot.rotation);renderer.render(scene,camera);requestAnimationFrame(loop);}
+  loop();
+  window.addEventListener('resize',()=>{camera.aspect=canvas.offsetWidth/canvas.offsetHeight;camera.updateProjectionMatrix();renderer.setSize(canvas.offsetWidth,canvas.offsetHeight);});
+}
+
+function initObservers(){
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }});
+  }, {threshold:.15});
+  els.forEach(el => obs.observe(el));
+  
+  const stats = document.querySelectorAll('.stat-number[data-target]');
+  const obs2 = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){
+      const el = e.target, target = +el.dataset.target;
+      let current = 0;
+      const suffix = el.querySelector('span')?.textContent || '';
+      const step = Math.max(1, Math.ceil(target/60));
+      const iv = setInterval(()=>{current+=step;if(current>=target){current=target;clearInterval(iv)}el.innerHTML=current+'<span>'+suffix+'</span>'},30);
+      obs2.unobserve(el);
+    }});
+  }, {threshold:.5});
+  stats.forEach(s => obs2.observe(s));
+}
+
+loadContent();
+initHero();
+initAbout();
+</script>
+
+<script>
+// Loader
+(function(){let p=0;const fill=document.getElementById('barFill'),pct=document.getElementById('pctText'),loader=document.getElementById('loader');
+const iv=setInterval(()=>{p+=Math.random()*10;if(p>=100){p=100;clearInterval(iv);setTimeout(()=>loader.classList.add('hidden'),500)}
+fill.style.width=p+'%';pct.textContent=Math.floor(p)+'%'},90);})();
+// Cursor
+(function(){if(window.matchMedia('(pointer:coarse)').matches){document.getElementById('cursorDot').style.display='none';document.getElementById('cursorRing').style.display='none';return;}
+const dot=document.getElementById('cursorDot'),ring=document.getElementById('cursorRing');let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx-4+'px';dot.style.top=my-4+'px'});
+(function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx-20+'px';ring.style.top=ry-20+'px';requestAnimationFrame(loop)})();
+document.addEventListener('mouseover',e=>{if(e.target.closest('a,button,.service-card,.portfolio-item,.cta-btn'))ring.classList.add('hover');});
+document.addEventListener('mouseout',e=>{if(e.target.closest('a,button,.service-card,.portfolio-item,.cta-btn'))ring.classList.remove('hover');});})();
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})});});
+</script>
 </body>
 </html>
